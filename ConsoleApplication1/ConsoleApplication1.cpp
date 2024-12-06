@@ -3,6 +3,7 @@
 #include <fstream>
 #include <vector>
 #include <regex>
+#include <unordered_map> 
 
 using namespace std;
 
@@ -17,6 +18,7 @@ static vector<string> extractData(const string& data, const string& regex);
 static string getResourceType(string s);
 static string getDate(string s);
 static double getValue(string s);
+static double getSumForResource(const vector<MeterReading>& readings, const string& resourceType);
 
 int main() {
     ifstream ist("in.txt");
@@ -35,10 +37,19 @@ int main() {
     for (const auto& item : readings) {
         cout << item << "\n";
     }
+
+    string resourceToSum;
+    cout << "Enter resource type to sum: ";
+    cin >> resourceToSum;
+
+    double sum = getSumForResource(readings, resourceToSum);
+    cout << "Sum for " << resourceToSum << ": " << sum << "\n";
+
+    return 0;
 }
 
 string getResourceType(string s) {
-    auto resourceType = extractData(s, R"([a-zA-Z\s]+)"); 
+    auto resourceType = extractData(s, R"([a-zA-Z\s]+)");
     if (resourceType.empty()) {
         throw runtime_error("Resource type not found in the input line.");
     }
@@ -73,6 +84,16 @@ vector<string> extractData(const string& data, const string& regex) {
         out.push_back(i->str());
     }
     return out;
+}
+
+double getSumForResource(const vector<MeterReading>& readings, const string& resourceType) {
+    double sum = 0.0;
+    for (const auto& reading : readings) {
+        if (reading.resourceType == resourceType) {
+            sum += reading.value;
+        }
+    }
+    return sum;
 }
 
 std::ostream& operator<<(std::ostream& stream, const MeterReading& reading) {
