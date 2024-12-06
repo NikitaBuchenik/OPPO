@@ -1,8 +1,8 @@
-﻿#include <iostream>
-#include <string>
-#include <fstream>
-#include <vector>
-#include <regex>
+﻿#include <iostream> 
+#include <string> 
+#include <fstream> 
+#include <vector> 
+#include <regex> 
 
 using namespace std;
 
@@ -32,13 +32,26 @@ int main() {
         readings.push_back({ resourceType, date, value });
     }
 
+    cout << "Enter the resource for calculating the total (e.g., 'Electricity', 'Water'): ";
+    string selRes;
+    cin >> selRes;
+
     for (const auto& item : readings) {
         cout << item << "\n";
     }
+
+    double totalValue = 0.0;
+    for (const auto& item : readings) {
+        if (item.resourceType == selRes) {
+            totalValue += item.value;
+        }
+    }
+
+    cout << "Total value for the resource " << selRes << ": " << totalValue << "\n";
 }
 
 string getResourceType(string s) {
-    auto resourceType = extractData(s, R"([a-zA-Z\s]+)"); 
+    auto resourceType = extractData(s, R"([a-zA-Z\s]+)");
     if (resourceType.empty()) {
         throw runtime_error("Resource type not found in the input line.");
     }
