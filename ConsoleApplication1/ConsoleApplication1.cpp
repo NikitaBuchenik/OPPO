@@ -1,8 +1,8 @@
-﻿#include <iostream>
-#include <string>
-#include <fstream>
-#include <vector>
-#include <regex>
+﻿#include <iostream> 
+#include <string> 
+#include <fstream> 
+#include <vector> 
+#include <regex> 
 
 using namespace std;
 
@@ -17,6 +17,7 @@ static vector<string> extractData(const string& data, const string& regex);
 static string getResourceType(string s);
 static string getDate(string s);
 static double getValue(string s);
+static double getSumForResource(const vector<MeterReading>& readings, const string& resourceType);
 
 int main() {
     ifstream ist("in.txt");
@@ -32,13 +33,26 @@ int main() {
         readings.push_back({ resourceType, date, value });
     }
 
+    cout << "Enter the resource for calculating the total (e.g., 'Electricity', 'Water'): ";
+    string selRes;
+    cin >> selRes;
+
     for (const auto& item : readings) {
         cout << item << "\n";
     }
+
+    double totalValue = 0.0;
+    for (const auto& item : readings) {
+        if (item.resourceType == selRes) {
+            totalValue += item.value;
+        }
+    }
+
+    cout << "Total value for the resource " << selRes << ": " << totalValue << "\n";
 }
 
 string getResourceType(string s) {
-    auto resourceType = extractData(s, R"([a-zA-Z\s]+)"); 
+    auto resourceType = extractData(s, R"([a-zA-Z\s]+)");
     if (resourceType.empty()) {
         throw runtime_error("Resource type not found in the input line.");
     }
@@ -73,6 +87,16 @@ vector<string> extractData(const string& data, const string& regex) {
         out.push_back(i->str());
     }
     return out;
+}
+
+double getSumForResource(const vector<MeterReading>& readings, const string& resourceType) {
+    double sum = 0.0;
+    for (const auto& reading : readings) {
+        if (reading.resourceType == resourceType) {
+            sum += reading.value;
+        }
+    }
+    return sum;
 }
 
 std::ostream& operator<<(std::ostream& stream, const MeterReading& reading) {
