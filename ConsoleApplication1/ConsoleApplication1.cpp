@@ -1,9 +1,8 @@
-﻿#include <iostream>
-#include <string>
-#include <fstream>
-#include <vector>
-#include <regex>
-#include <unordered_map> 
+﻿#include <iostream> 
+#include <string> 
+#include <fstream> 
+#include <vector> 
+#include <regex> 
 
 using namespace std;
 
@@ -34,18 +33,22 @@ int main() {
         readings.push_back({ resourceType, date, value });
     }
 
+    cout << "Enter the resource for calculating the total (e.g., 'Electricity', 'Water'): ";
+    string selRes;
+    cin >> selRes;
+
     for (const auto& item : readings) {
         cout << item << "\n";
     }
 
-    string resourceToSum;
-    cout << "Enter resource type to sum: ";
-    cin >> resourceToSum;
+    double totalValue = 0.0;
+    for (const auto& item : readings) {
+        if (item.resourceType == selRes) {
+            totalValue += item.value;
+        }
+    }
 
-    double sum = getSumForResource(readings, resourceToSum);
-    cout << "Sum for " << resourceToSum << ": " << sum << "\n";
-
-    return 0;
+    cout << "Total value for the resource " << selRes << ": " << totalValue << "\n";
 }
 
 string getResourceType(string s) {
